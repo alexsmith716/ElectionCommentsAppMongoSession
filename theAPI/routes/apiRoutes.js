@@ -15,7 +15,6 @@ router.post('/comments/maincomment', auth.ensureAuthenticated, apiControllers.po
 
 router.post('/comments/subcomment/:subcommentid', auth.ensureAuthenticated, apiControllers.postSubCommentResponse);
 
-// router.post('/signup', apiControllers.postSignUpResponse);
 router.post('/login', apiControllers.postLoginResponse);
 
 router.get('/userprofile/:userid', auth.ensureAuthenticated, apiControllers.getUserProfileResponse);

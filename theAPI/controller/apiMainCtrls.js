@@ -23,7 +23,6 @@ module.exports.getIndexResponse = function(req, res) {
 };
 
 module.exports.getUserHomeResponse = function(req, res) {
-  console.log('####### > apiMainCtrls.js > getUserHomeResponse XXXXXXXXXXXXXXXXX')
   sendJSONresponse(res, 200), { "response": "getUserHomeResponse Response!!!" };
 };
 
@@ -455,44 +454,6 @@ var validateMaxLengthUserInput = function (val,maxlen) {
   return newVal;
 };
 
-/*
-module.exports.ajaxLoginUser = function(req, res){
-
-  passport.authenticate('local', function(err, user, info){
-
-    if (err) {
-      sendJSONresponse(res, 404, { 'response': 'error' });
-      return;
-    }
-    if (info) {
-      sendJSONresponse(res, 401, { 'response': 'error' });
-      return;
-    }
-
-    req.logIn(user, function(err) {
-      
-      if (err) { 
-        sendJSONresponse(res, 404, { 'response': 'error' });
-        return;
-
-      }else{
-
-        user.previouslogin = user.lastlogin;
-        user.lastlogin = new Date();
-
-        user.save(function(err, success) {
-          if (err) {
-            sendJSONresponse(res, 404, { 'response': 'error' });
-          } else {
-            sendJSONresponse(res, 201, { 'response': 'success', 'redirect': '/userhome' });
-          }
-        });
-      }
-    });
-  })(req, res);
-};
-*/
-
 
 module.exports.ajaxLoginUser = function(req, res){
 
@@ -500,10 +461,10 @@ module.exports.ajaxLoginUser = function(req, res){
                   password: 'required', 
                   expectedResponse: 'true'};
 
-  var testerJOB = { email: 'aaa1@aa a.com',
+  var testerJOB = {email: 'aaa1@aa a.com',
                     password: '  pppp   '};
 
-  req.body = testerJOB;
+  // req.body = testerJOB;
 
   serverSideValidation(req, res, template, function(validatedResponse) {
 
@@ -521,7 +482,38 @@ module.exports.ajaxLoginUser = function(req, res){
 
     if(!validationErrors){
 
-      sendJSONresponse(res, 201, { 'response': 'success', 'redirect': '/userhome' });
+      passport.authenticate('local', function(err, user, info){
+
+        if (err) {
+          sendJSONresponse(res, 404, { 'response': 'error' });
+          return;
+        }
+        if (info) {
+          sendJSONresponse(res, 401, { 'response': 'error' });
+          return;
+        }
+
+        req.logIn(user, function(err) {
+          
+          if (err) { 
+            sendJSONresponse(res, 404, { 'response': 'error' });
+            return;
+
+          }else{
+
+            user.previouslogin = user.lastlogin;
+            user.lastlogin = new Date();
+
+            user.save(function(err, success) {
+              if (err) {
+                sendJSONresponse(res, 404, { 'response': 'error' });
+              } else {
+                sendJSONresponse(res, 201, { 'response': 'success', 'redirect': '/userhome' });
+              }
+            });
+          }
+        });
+      })(req, res);
 
     }else{
       
@@ -558,7 +550,7 @@ module.exports.ajaxSignUpUser = function(req, res){
                         state: 'required',
                         expectedResponse: 'false'};
 
-  var testerJOB = { displayname: ' displaynameABC123',
+  var testerJOB = {displayname: ' displaynameABC123',
                     email: 'aaa1@aaa.com',
                     confirmEmail: '        aaa@aaa.com     ',
                     password: 'pppp',
@@ -568,7 +560,13 @@ module.exports.ajaxSignUpUser = function(req, res){
                     city: '               AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz          ',
                     state: { initials: 'NY', full: 'New York' }};
 
-  // req.body = testerJOB;
+  var testerJOB2 = {displayname: ' displaynameABC123',
+                    email: 'aaa1@aaa.com',
+                    confirmEmail: '        aaa@aaa.com     ',
+                    password: 'pppp',
+                    confirmPassword: 'pppp '};
+
+  //req.body = testerJOB2;
 
   serverSideValidation(req, res, template, function(validatedResponse) {
 
@@ -594,6 +592,8 @@ module.exports.ajaxSignUpUser = function(req, res){
       sendJSONresponse(res, 201, { 'response': 'success', 'redirect': '/userhome' });
 
     }else{
+
+      console.log('####### > apiMainCtrls.js > module.exports.ajaxSignUpUser > validatedResponse: ', validatedResponse)
       
       sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
 
