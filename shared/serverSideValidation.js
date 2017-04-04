@@ -34,13 +34,12 @@ module.exports = function (req, res, validateTemplate, cb) {
 
   for(var compareTemplateName in validateTemplate) {
 
-    console.log('####### > serverSideValidation 11111');
-
     testName = compareTemplateName;
+    console.log('####### > serverSideValidation 11111: ', testName);
 
     for(compareTemplateName in reqBody) {
 
-      console.log('####### > serverSideValidation 2222: ', objName);
+      console.log('####### > serverSideValidation 2222: ', compareTemplateName);
 
       if(testName === compareTemplateName){
         testName = undefined;
@@ -49,6 +48,7 @@ module.exports = function (req, res, validateTemplate, cb) {
 
     }
 
+    console.log('####### > serverSideValidation 2222: ', compareTemplateName);
     if(testName !== undefined && testName !== 'expectedResponse'){
       nomatch[testName] = 'empty';
       reqBody[testName] = '';

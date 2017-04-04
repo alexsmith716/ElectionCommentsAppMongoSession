@@ -26,9 +26,11 @@ var sanitize  = require('./shared/sanitizeInput.js');
 require('./shared/sessionPrototype');
 
 var app   = express();
-app.disable('x-powered-by');
 
 var logDirectory  = path.join(__dirname, 'httpRequestLog');
+
+app.use(helmet());
+// app.use(helmet.noCache());
 
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -56,8 +58,6 @@ setUpAuthentication();
 
 app.set('views', path.join(__dirname, 'theServer', 'views'));
 app.set('view engine', 'pug');
-//app.set('view cache', true);
-
 
 //app.use(favicon(__dirname + '/public/images/favicon.ico'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -85,14 +85,9 @@ app.use(morgan('combined', {stream: accessLogStream}));
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-
-app.use(helmet());
 app.use(cookieParser());
-
 
 
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
