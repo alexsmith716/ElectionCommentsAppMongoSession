@@ -140,19 +140,17 @@ var helper = {
  
             if (email === '' || password === '') {
 
-                console.log('+++++++++++ BAD FORM!');
                 hideLoading();
                 return false;
 
             }else{
 
-                console.log('+++++++++++ GOOD FORM!');
-
                 data = {
                     email: email,
-                    password: password,
-                    _csrf: $('meta[name="csrf-token"]').attr('content')
+                    password: password
                 };
+
+                data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
 
                 $.ajax({
 
@@ -167,19 +165,16 @@ var helper = {
                     success: function(data, status, xhr) {
 
                         if (data.response === 'success') {
-                            console.log('+++++++++++ ajax 1111');
 
-                            //location.href = data.redirect;
+                            location.href = data.redirect;
 
                         } else {
-
-                            console.log('+++++++++++ ajax 2222');
 
                             $('#loginForm .form-control').addClass('has-error');
                             $('#loginForm .loginerror').addClass('show');
                             $('#loginForm .loginerror').html('Email and Password don\'t match. Please try again.');
 
-                            helper.handleErrorResponse(data.validatedData);
+                            //helper.handleErrorResponse(data.validatedData);
 
                             hideLoading();
                             return false;
@@ -189,21 +184,10 @@ var helper = {
                     error: function(xhr, status, error) {
 
                         var parsedXHR = JSON.parse(xhr.responseText);
-                        console.log('+++++++++++ ajax 3333: ', xhr.responseText);
 
                         location.href = parsedXHR.redirect;
 
                         return false;
-
-                        /*
-                        if(parsedXHR.type === 'token'){
-                            location.href = parsedXHR.redirect;
-                        }else{
-                            $('#loginForm .form-control').addClass('has-error');
-                            $('#loginForm .loginerror').addClass('show');
-                            $('#loginForm .loginerror').html('Email and Password don\'t match. Please try again.');
-                        }
-                        */
 
                     }
                 });
@@ -232,23 +216,26 @@ var helper = {
 
     handleErrorResponse: function(data) {
 
-        console.log('######## handleErrorResponse 1 $$$$$$$$$$$$$$$$: ', data);
-
         Object.keys(data).forEach(function(p) {
-            console.log('######## handleErrorResponse 2 $$$$$$$$$$$$$$$$: ', p, ' | ', data[p]);
 
+            /*
+            $('#loginForm .form-control').addClass('has-error');
+            $('#loginForm .loginerror').addClass('show');
+            $('#loginForm .loginerror').html('Email and Password don\'t match. Please try again.');
+            */
+            
+            /*
             switch (p) {
 
                 case 'email':
-                    //helper.validateEmailField(null, 'email', 'confirmEmail', data[p]);
-                    console.log('#### handleErrorResponse > email +++++')
+                    helper.validateEmailField(null, 'email', 'confirmEmail', data[p]);
                     break;
    
                 case 'password':
-                    //helper.testUserInput(p, helper.pattern.password, data[p]);
-                    console.log('#### handleErrorResponse > password +++++')
+                    helper.testUserInput(p, helper.pattern.password, data[p]);
                     break;
             }
+            */
         });
     },
 

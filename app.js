@@ -239,6 +239,7 @@ if (app.get('env') === 'development') {
     app.locals.notifyMessageType = 'danger';
 
     console.log('DEVELOPMENT ERROR > code/status/name/xhr: ', err.code,  ' :: ', err.status, ' :: ', err.name, ' :: ', req.xhr);
+    console.log('DEVELOPMENT ERROR: ', err);
 
     req.session.destroy(function(err) {
 

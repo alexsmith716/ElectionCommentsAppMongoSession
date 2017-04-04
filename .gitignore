@@ -42,9 +42,9 @@ lib-cov
 *.pid
 *.gz
 *.err
-.env
-.crt
-.pem
+*.env
+*.crt
+*.pem
 
 bin/*.json
 .bin
@@ -62,5 +62,6 @@ pids
 logs
 results
 node_modules
+ssl
 
 
