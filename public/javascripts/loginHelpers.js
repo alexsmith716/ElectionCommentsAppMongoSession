@@ -49,6 +49,9 @@ var helper = {
 
             e.preventDefault();
 
+            $('#forgotPassword').removeClass('has-error');
+            $('#forgotPasswordForm .loginerror').removeClass('show').html('');
+
             var data = {};
             var email = $('#forgotPassword').val();
             var isEmailValid = emailPattern.test(email);
@@ -66,6 +69,8 @@ var helper = {
             }
 
             $('.loading').show();
+
+            console.log('##### > forgotPasswordForm submit > email: ', email)
 
             data = {
                 email: email
@@ -85,7 +90,6 @@ var helper = {
                 success: function(data, status, xhr) {
 
                     if (data.response === 'success') {
-                        console.log('signUpSubmitBtn > ajax > SUCCESS > SUCCESS');
 
                         $('#forgotPassword').attr('disabled', 'true');
                         $('.modalAlertWarning').show();
@@ -94,10 +98,9 @@ var helper = {
                         $('.loading').hide();
 
                     } else {
-                        console.log('signUpSubmitBtn > ajax > SUCCESS > ERROR');
 
                         $('#forgotPassword').addClass('has-error');
-                        $('#forgotPasswordForm .loginerror').addClass('show').html('Could not validate your email.');
+                        $('#forgotPasswordForm .loginerror').addClass('show').html('Please enter a valid email address');
 
                         //helper.handleErrorResponse(data.validatedData);
 
@@ -109,8 +112,6 @@ var helper = {
                 error: function(xhr, status, error) {
 
                     var parsedXHR = JSON.parse(xhr.responseText);
-
-                    console.log('#forgotPasswordForm > ajax > ERROR > ERROR > parsedXHR: ', parsedXHR);
 
                     location.href = parsedXHR.redirect;
 
@@ -221,25 +222,18 @@ var helper = {
     handleErrorResponse: function(data) {
 
         Object.keys(data).forEach(function(p) {
-
-            /*
-            $('#loginForm .form-control').addClass('has-error');
-            $('#loginForm .loginerror').addClass('show');
-            $('#loginForm .loginerror').html('Email and Password don\'t match. Please try again.');
-            */
-            
-            /*
+           
             switch (p) {
 
                 case 'email':
-                    helper.validateEmailField(null, 'email', 'confirmEmail', data[p]);
+                    // console.log('handleErrorResponse: ', p, ' :: ', data[p]);
                     break;
    
                 case 'password':
-                    helper.testUserInput(p, helper.pattern.password, data[p]);
+                    // console.log('handleErrorResponse: ', p, ' :: ', data[p]);
                     break;
             }
-            */
+
         });
     },
 
