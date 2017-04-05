@@ -24,7 +24,7 @@ block content
 
         .modal-body
 
-          form(action="https://localhost:3000/api/evaluateuseremail", id="forgotPasswordForm", name="forgotPasswordForm", method="post", enctype="application/x-www-form-urlencoded")
+          form(action="https://localhost:3000/api/forgotpassword", id="forgotPasswordForm", name="forgotPasswordForm", method="post", enctype="application/x-www-form-urlencoded")
             
             .formLead
               p Forgot your password? Enter your email address below and we'll send instructions on how to reset your password.
@@ -39,7 +39,7 @@ block content
           
                 label.control-label(style="margin-top:10px;") Email:
           
-                input.form-control.input-md(id="forgotEmail", name="forgotEmail", placeholder="Email Address", title="Please enter a valid Email Address", type="email", required)
+                input.form-control.input-md(id="forgotPassword", name="forgotPassword", placeholder="Email Address", title="Please enter a valid Email Address", type="text")
 
                 .text-danger.hide.loginerror(style="margin-top:8px;") Email is required
           

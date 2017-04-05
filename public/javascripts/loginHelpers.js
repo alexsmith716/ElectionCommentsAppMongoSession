@@ -12,9 +12,9 @@ var helper = {
 
         showLoading(); 
 
-        $('[name="forgotEmail"]').prop('required', true);
-        $('[name="email"]').prop('required', true);
-        $('[name="password"]').prop('required', true);
+        //$('[name="forgotPassword"]').prop('required', true);
+        //$('[name="email"]').prop('required', true);
+        //$('[name="password"]').prop('required', true);
 
         setTimeout(function() { hideLoading(); }, 500);
 
@@ -33,45 +33,46 @@ var helper = {
             })
         });
 
+
         $('#forgotPasswordFormModal').on('hidden.bs.modal', function () {
-            $('#forgotEmail').val('');
+            $("#forgotPasswordForm").get(0).reset();
+            $('#forgotPassword').removeAttr('disabled');
             $('#forgotPasswordForm .loginerror').removeClass('show').html('');
-            $('#forgotEmail').removeClass('has-error');
+            $('#forgotPassword').removeClass('has-error');
             $('.modalAlertWarning').hide();
             $('.modalOkayBtn').hide();
             $('.modalCancelSubmitBtns').show();
         });
 
+
         $('#forgotPasswordForm').on('submit', function(e) {
 
             e.preventDefault();
 
-            $('#forgotEmail').removeClass('has-error');
-            $('#forgotPasswordForm .loginerror').removeClass('show').html('');
-            
-            var email = $('#forgotEmail').val();
-            email = email.trim();
+            var data = {};
+            var email = $('#forgotPassword').val();
             var isEmailValid = emailPattern.test(email);
+            var serviceUrl = $(this).attr('action');
 
+            /*
             if (email === '') {
-                $('#forgotEmail').addClass('has-error');
+                $('#forgotPassword').addClass('has-error');
                 $('#forgotPasswordForm .loginerror').addClass('show').html('Please enter email');
                 return false;
             }
             if (!isEmailValid) {
-                $('#forgotEmail').addClass('has-error');
+                $('#forgotPassword').addClass('has-error');
                 $('#forgotPasswordForm .loginerror').addClass('show').html('Please enter your valid email');
                 return false;
-            }
+            }*/
 
             $('.loading').show();
 
-            var data = {};
-            var pathName = 'email';
-            data[pathName] = email;
-            pathName = 'expectedResponse';
-            data[pathName] = 'true';
-            var serviceUrl = $(this).attr('action');
+            data = {
+                email: email
+            };
+
+            data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
             
             $.ajax({
                 rejectUnauthorized: false,
@@ -87,43 +88,54 @@ var helper = {
                     if (data.response === 'success') {
                         console.log('signUpSubmitBtn > ajax > SUCCESS > SUCCESS');
 
+                        $('#forgotPassword').attr('disabled', 'true');
                         $('.modalAlertWarning').show();
                         $('.modalOkayBtn').show();
                         $('.modalCancelSubmitBtns').hide();
                         $('.loading').hide();
+
                     } else {
                         console.log('signUpSubmitBtn > ajax > SUCCESS > ERROR');
 
-                        $('#forgotEmail').addClass('has-error');
+                        $('#forgotPassword').addClass('has-error');
                         $('#forgotPasswordForm .loginerror').addClass('show').html('Could not validate your email.');
+
+                        //helper.handleErrorResponse(data.validatedData);
+
                         $('.loading').hide();
                         return false;
                     }
                 },
+
                 error: function(xhr, status, error) {
+
                     var parsedXHR = JSON.parse(xhr.responseText);
 
                     console.log('#forgotPasswordForm > ajax > ERROR > ERROR > parsedXHR: ', parsedXHR);
 
-                    if(parsedXHR.type === 'token'){
-                        location.href = parsedXHR.redirect;
-                    }else{
-                        $('#forgotEmail').addClass('has-error');
-                        $('#forgotPasswordForm .loginerror').addClass('show').html('Could not validate your email, try again or contact customer service.');
-                        $('.loading').hide();
-                        return false;
-                    }
+                    location.href = parsedXHR.redirect;
+
+                    return false;
 
                 }
             });
         });
 
-        $('#forgotEmail').on('keypress', function(e) {
+        $('#forgotPassword').on('keypress', function(e) {
             var key = e.keyCode;
             if (key === 13) {
                 $('#forgotPasswordForm').submit();
             }
         });
+
+
+
+
+
+
+
+
+
 
         $('#loginForm').on('submit', function(e) {
 
@@ -134,8 +146,8 @@ var helper = {
             $('#loginForm .form-control').removeClass('has-error');
 
             var data = {};
-            var email = $.trim($('#login-email').val());
-            var password = $.trim($('#login-password').val());
+            var email = $('#login-email').val();
+            var password = $('#login-password').val();
             var serviceUrl = $(this).attr('action');
  
             if (email === '' || password === '') {
@@ -203,12 +215,12 @@ var helper = {
         $('.modal-backdrop').hide();
     },
 
+
     clearForgotPassword: function() {
         $("#forgotPasswordForm").get(0).reset();
-        $('#forgotEmail').val('');
-        $('#forgotPasswordForm .loginerror').addClass('hide');
-        $('#forgotPasswordForm .loginerror').text('');
-        $('#forgotEmail').removeClass('invalid');
+        $('#forgotPassword').removeAttr('disabled');
+        $('#forgotPasswordForm .loginerror').removeClass('show').html('');
+        $('#forgotPassword').removeClass('has-error');
         $('.modalAlertWarning').hide();
         $('.modalOkayBtn').hide();
         $('.modalCancelSubmitBtns').show();
