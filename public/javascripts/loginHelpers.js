@@ -12,9 +12,9 @@ var helper = {
 
         showLoading(); 
 
-        //$('[name="forgotPassword"]').prop('required', true);
-        //$('[name="email"]').prop('required', true);
-        //$('[name="password"]').prop('required', true);
+        $('[name="forgotPassword"]').prop('required', true);
+        $('[name="email"]').prop('required', true);
+        $('[name="password"]').prop('required', true);
 
         setTimeout(function() { hideLoading(); }, 500);
 
@@ -54,7 +54,6 @@ var helper = {
             var isEmailValid = emailPattern.test(email);
             var serviceUrl = $(this).attr('action');
 
-            /*
             if (email === '') {
                 $('#forgotPassword').addClass('has-error');
                 $('#forgotPasswordForm .loginerror').addClass('show').html('Please enter email');
@@ -64,7 +63,7 @@ var helper = {
                 $('#forgotPassword').addClass('has-error');
                 $('#forgotPasswordForm .loginerror').addClass('show').html('Please enter your valid email');
                 return false;
-            }*/
+            }
 
             $('.loading').show();
 
@@ -121,20 +120,13 @@ var helper = {
             });
         });
 
+
         $('#forgotPassword').on('keypress', function(e) {
             var key = e.keyCode;
             if (key === 13) {
                 $('#forgotPasswordForm').submit();
             }
         });
-
-
-
-
-
-
-
-
 
 
         $('#loginForm').on('submit', function(e) {
