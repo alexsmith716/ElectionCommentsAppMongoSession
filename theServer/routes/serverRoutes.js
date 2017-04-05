@@ -10,10 +10,10 @@ var csrfProtection 		= csrf({ cookie: true });
 
 
 router.use(function(req, res, next) {
-  //res.locals.currentUser = req.user;
+  res.locals.currentUser = req.user;
   //res.locals.currentURL = req.url;
   if(res.locals.currentUser){
-    //req.session.paginateFrom = res.locals.sortDocsFrom;
+    //.session.paginateFrom = res.locals.sortDocsFrom;
     //req.session.lastPageVisited = '/indexView';
   }
   next();

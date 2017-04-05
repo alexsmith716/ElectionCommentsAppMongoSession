@@ -3,7 +3,7 @@ var evaluateUserEmail = require('./evaluateUserEmail.js');
 
 module.exports = function (req, res, validateTemplate, cb) {
 
-  //console.log('####### > serverSideValidation > req.body > IN: ', req.body);
+  console.log('####### > serverSideValidation > req.body > IN: ', req.body);
 
   /*
       pattern: {
@@ -311,7 +311,9 @@ module.exports = function (req, res, validateTemplate, cb) {
     emailIsValid ? objValue = reqBody.email : objValue = reqBody.confirmEmail;
     objValue === reqBody.email ? objName1 = 'email' : objName1 = 'confirmEmail';
 
+
     evaluateUserEmail(objValue, validateTemplate.expectedResponse, function(response) {
+
 
       if(response.response === 'error'){
 
@@ -320,6 +322,7 @@ module.exports = function (req, res, validateTemplate, cb) {
         validatedUserInput[objName1] = elementObject;
 
       }
+
 
       objName1 === 'email' ? objValue = reqBody.confirmEmail : objValue = reqBody.email;
       objName1 === 'email' ? objName1 = 'confirmEmail' : objName1 = 'email';
@@ -371,7 +374,7 @@ module.exports = function (req, res, validateTemplate, cb) {
 
   }else{
     console.log('####### > serverSideValidation > req.body > OUT 3: ');
-    console.log('####### > serverSideValidation > callback3 > validatedUserInput: ');
+    console.log('####### > serverSideValidation > callback3 > validatedUserInput: ', validatedUserInput);
     cb(validatedUserInput);
 
   }

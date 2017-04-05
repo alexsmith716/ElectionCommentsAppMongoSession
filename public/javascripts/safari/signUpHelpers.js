@@ -79,7 +79,6 @@ var helper = {
             var constrainedFormElements = document.getElementById('signUpForm').querySelectorAll('[required]');
             var serviceUrl = $(this).attr('action');
 
-
             if(constrainedFormElements.length > 0){
 
                 var testChange = helper.testFormValidity(constrainedFormElements, 'change');
@@ -99,6 +98,8 @@ var helper = {
 
                 //}
             }
+
+            console.log('+++++++++++ GOOD FORM !!!!!!!!!!!');
 
             data['_csrf'] = $('meta[name="csrf-token"]').attr('content');
             
@@ -302,9 +303,9 @@ var helper = {
         err1 !== undefined && err1.lengthError === 'maxlength' ? patternTestValue = false : null;
 
         if(err1 !== undefined){
-            //console.log('textElementValidation 1/2/3/4: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue, ' || ', err1)
+            //console.log('textElementValidation > err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue, ' || ', err1)
         }else{
-            //console.log('textElementValidation 1/2/3: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue)
+            //console.log('textElementValidation > no err1: ', elementID, ' || ', thisElementValue, ' || ', patternTestValue)
         }
 
         if(thisElementValue !== ''){
@@ -355,9 +356,9 @@ var helper = {
         err1 !== undefined && err1.error === 'empty' ? thisElementValue = '' : null;
 
         if(err1 !== undefined){
-            //console.log('#selectElementValidation err1:', elementID, ' :: ', err1, ' :: ', thisElementValue);
+            //console.log('#selectElementValidation > err1:', elementID, ' :: ', err1, ' :: ', thisElementValue);
         }else{
-            //console.log('#selectElementValidation no err1:', elementID, ' :: ', thisElementValue);
+            //console.log('#selectElementValidation > no err1:', elementID, ' :: ', thisElementValue);
         }
         
         if(thisElementValue !== ''){
@@ -398,9 +399,9 @@ var helper = {
     testUserInput: function(elementID, pattern, err1) {
 
         if(err1 !== undefined){
-            //console.log('#testUserInput > elementID/pattern/err1:', elementID, ' :: ', pattern, ' :: ', err1);
+            //console.log('#testUserInput > err1: ', elementID, ' :: ', pattern, ' :: ', err1);
         }else{
-            //console.log('#testUserInput > elementID/pattern:', elementID, ' :: ', pattern);
+            //console.log('#testUserInput > no err1: ', elementID, ' :: ', pattern);
         }
 
         var thisElementValue = $('#'+elementID).val();
@@ -484,9 +485,9 @@ var helper = {
     validateParams: function(str1, str2, err1) {
 
         if(err1 !== undefined){
-            //console.log('## validateParams 1 > str1/str2/err1: ', str1, ' || ', str2, ' || ', err1)
+            //console.log('## validateParams > err1: ', str1, ' || ', str2, ' || ', err1)
         }else{
-            //console.log('## validateParams 1 > str1/str2: ', str1, ' || ', str2)
+            //console.log('## validateParams > no err1: ', str1, ' || ', str2)
         }
 
         if ((err1 !== undefined && (err1.error === 'nomatch' || err1.error === 'match')) || $('#' + str2).val() !== '') {
@@ -631,9 +632,9 @@ var helper = {
     validateEmailField: function(elementVal, thisField, comparedField, err1) {
 
         if(err1 !== undefined){
-            //console.log('#validateEmailField 1 > thisField/err1', thisField, ' :: ', err1)
+            //console.log('#validateEmailField > err1: ', thisField, ' :: ', err1)
         }else{
-            //console.log('#validateEmailField 1 > thisField', thisField)
+            //console.log('#validateEmailField > no err1: ', thisField)
         }
 
         var isEmailValid;
@@ -695,6 +696,10 @@ var helper = {
 
             }
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null;
+
+        }else if(err1 !== undefined && err1.error === 'empty'){
+
+            helper.testUserInputEmail(thisField, err1);
         }
     },
 
@@ -735,10 +740,12 @@ var helper = {
                     break;
 
                 case 'email':
+                    console.log('EMAILLLLLLLLLL 1: ', data[p])
                     helper.validateEmailField(null, 'email', 'confirmEmail', data[p]);
                     break;
 
                 case 'confirmEmail':
+                console.log('EMAILLLLLLLLLL 2: ', data[p])
                     helper.validateEmailField(null, 'confirmEmail', 'email', data[p]);
                     break;
    
