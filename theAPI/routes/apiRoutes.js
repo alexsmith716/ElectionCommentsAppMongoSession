@@ -29,6 +29,8 @@ router.post('/validatelogin', apiControllers.postValidateLogin);
 
 
 router.post('/loginuser', csrfProtection, apiControllers.ajaxLoginUser);
+router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword);
+
 router.post('/signupuser', csrfProtection, apiControllers.ajaxSignUpUser);
 router.put('/evaluateuserprofile', auth.ensureAuthenticated, csrfProtection, apiControllers.ajaxEvaluateUserProfile);
 

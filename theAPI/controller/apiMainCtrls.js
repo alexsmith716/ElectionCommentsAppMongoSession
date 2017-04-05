@@ -447,6 +447,59 @@ module.exports.ajaxEvaluateUserEmail = function(req, res) {
   
 };
 
+
+module.exports.ajaxForgotPasswordXX = function(req, res) {
+
+  console.log('###### > module.exports.ajaxForgotPassword IN:',req.body.email,'::',req.body.expectedResponse)
+
+  evaluateUserEmail(req.body.email, 'true', function(response) {
+
+    console.log('###### > module.exports.ajaxForgotPassword OUT: ', response.status, ' :: ', response.response)
+
+    sendJSONresponse(res, 200, { 'response': response.response });
+
+  });
+  
+};
+
+
+// will include nodemailer for ForgotPassword later/last +++
+module.exports.ajaxForgotPassword = function(req, res) {
+
+  var template = {email: 'required',
+                  expectedResponse: 'true'};
+
+  var testerJOB = {email: '   aaa  1@aaa.com     '};
+
+  //req.body = testerJOB;
+
+  serverSideValidation(req, res, template, function(validatedResponse) {
+
+    var validationErrors = false;
+
+    for(var prop in validatedResponse) {
+
+      if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+
+        validationErrors = true;
+        break;
+
+      }
+    }
+
+    if(!validationErrors){
+
+      sendJSONresponse(res, 201, { 'response': 'success' });
+
+    }else{
+      
+      sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
+
+    }
+  });
+};
+
+
 var validateMaxLengthUserInput = function (val,maxlen) {
   var newVal = (val.length) - maxlen;
   newVal = (val.length) - newVal;
@@ -593,8 +646,6 @@ module.exports.ajaxSignUpUser = function(req, res){
 
     }else{
 
-      console.log('####### > apiMainCtrls.js > module.exports.ajaxSignUpUser > validatedResponse: ', validatedResponse)
-      
       sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
 
     }

@@ -219,7 +219,7 @@ app.use(function(req, res, next) {
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
     res.status(401);
-    res.json({"message" : err.name + ": " + err.message});
+    res.json({});
   }
 });
 */
@@ -235,6 +235,8 @@ if (app.get('env') === 'development') {
 
     res.status(err.status || 500);
 
+    //res.locals.notifyMessage = '';
+    //res.locals.notifyMessageType = '';
     app.locals.notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
     app.locals.notifyMessageType = 'danger';
 
