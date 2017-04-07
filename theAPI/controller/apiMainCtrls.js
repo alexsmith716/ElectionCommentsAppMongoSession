@@ -641,10 +641,37 @@ module.exports.ajaxSignUpUser = function(req, res){
 
     if(!validationErrors){
 
-      sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' });
+      // creation of new user here +++++
+
+      /*
+      var newUser = new User();
+      newUser.displayname = req.body.displayname;
+      newUser.email = req.body.email;
+      newUser.firstname = req.body.firstname;
+      newUser.lastname = req.body.lastname;
+      newUser.city = req.body.city;
+      newUser.state = req.body.state;
+
+      newUser.setPassword(req.body.password, function(err, result){
+        if (err) {
+          sendJSONresponse(res, 400, err);
+        }
+        newUser.save(function(err) {
+          if (err) {
+            sendJSONresponse(res, 400, err);
+          } else {
+            sendJSONresponse(res, 201, result);
+          }
+        });
+      });
+      */
+
+      console.log('############ ajaxSignUpUser > NO validationErrors (going to database) ##############');
+      sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/loginorsignup' });
 
     }else{
 
+      console.log('############ ajaxSignUpUser > YES validationErrors (going to client) ##############');
       sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
 
     }
