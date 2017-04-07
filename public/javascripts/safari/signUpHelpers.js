@@ -14,6 +14,7 @@ var helper = {
         
         showLoading();
 
+
         $('[name="displayname"]').prop('required', true);
         $('[name="email"]').prop('required', true);
         $('[name="confirmEmail"]').prop('required', true);
@@ -30,7 +31,7 @@ var helper = {
     },
 
 
-    testFormValidity: function (theForm, eventListener) {
+    testFormValidity: function (theForm, eventListener, setFocusOnly) {
 
         var boundEventTypes;
         var formElement;
@@ -49,25 +50,29 @@ var helper = {
                 resp.focusFirstElement = formElement;
             }
 
-            if(eventListener === 'change'){
-                boundEventTypes = $._data( formElement[0], 'events' );
-                for (var eType in boundEventTypes){
-                  helper.handleFormEvents(formElement.attr('id'), eType, formElement.val());
+            if(!setFocusOnly){
+                if(eventListener === 'change'){
+                    boundEventTypes = $._data( formElement[0], 'events' );
+                    for (var eType in boundEventTypes){
+                      helper.handleFormEvents(formElement.attr('id'), eType, formElement.val());
+                    }
+                }
+                if(eventListener === 'focusout'){
+                    formElement.on('focusout', function(e) {
+                        helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
+                    })
+                    formElement.trigger('focusout');
                 }
             }
-            if(eventListener === 'focusout'){
-                formElement.on('focusout', function(e) {
-                    helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
-                })
-                formElement.trigger('focusout');
-            }
-
         }
         return resp;
     },
 
-
     initializeJqueryEvents:  function(){
+
+        $('#signUpSubmitBtn').on('click', function(e) {
+            //console.log('#signUpSubmitBtn > click +++');
+        });
 
         $('#signUpForm').on('submit', function(e) {
 
@@ -79,24 +84,18 @@ var helper = {
             var constrainedFormElements = document.getElementById('signUpForm').querySelectorAll('[required]');
             var serviceUrl = $(this).attr('action');
 
-            if(constrainedFormElements.length > 0){
+            if(is_safari){
 
-                var testChange = helper.testFormValidity(constrainedFormElements, 'change');
+                var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout');
 
-                //if(!testAnyChanges.formValid && is_safari){
+                if (testFocusout.formValid !== undefined){
 
-                    var testFocusout = helper.testFormValidity(constrainedFormElements, 'focusout');
+                    console.log('+++++++++++ BAD FORM !!!!!!!!!!!');
+                    testFocusout.focusFirstElement.focus();
+                    hideLoading();
+                    return false;
 
-                    console.log('constrainedFormElements > testAnyValidationErrors: ', testFocusout.formValid, ' || ', testFocusout.focusFirstElement)
-
-                    if (testFocusout.formValid !== undefined){
-                        console.log('+++++++++++ BAD FORM !!!!!!!!!!!');
-                        testFocusout.focusFirstElement.focus();
-                        hideLoading();
-                        return false;
-                    }
-
-                //}
+                }
             }
 
             console.log('+++++++++++ GOOD FORM !!!!!!!!!!!');
@@ -117,19 +116,16 @@ var helper = {
 
                     if (data.response === 'success') {
 
-                        /*
-                        .form-group
-                            span.hide.error
-                            span.hide.text-danger
-                        .text-danger.hide.formerror
-                        */
                         $('#signUpForm .form-control').removeClass('has-error');
                         $('#signUpForm .form-group .error').removeClass('show').addClass('hide');
                         $('#signUpForm .form-group .text-danger').removeClass('show').addClass('hide');
                         $('.formerror').removeClass('show').addClass('hide');
 
+                        location.href = data.redirect;
+
                     } else {
 
+                        $('#signUpForm').data('validatedData', data.validatedData);
                         helper.handleErrorResponse(data.validatedData);
         
                         hideLoading();
@@ -210,7 +206,6 @@ var helper = {
 
 
     handleFormEvents: function(elementID, eType, elementVal) {
-        console.log('#handleFormEvents > elementID|eType|elementVal: ', elementID, ' || ', eType, ' || ', elementVal);
 
         elementID === 'displayname' ? helper.displaynameElementValidation(elementID) : null;
 
@@ -517,8 +512,6 @@ var helper = {
 
                 }
 
-                return false;
-
             } else {
 
                 if (is_safari) {
@@ -544,8 +537,25 @@ var helper = {
 
                     }
                 }
+                if(str1 === 'email' || str1 === 'confirmEmail'){
 
-                return true;
+                    var valdata = $('#signUpForm').data('validatedData');
+                    var v;
+
+                    if(valdata){
+
+                        Object.keys(valdata).forEach(function(p) {
+                            if(p !== 'email' || p !== 'confirmEmail'){
+                                if(valdata[p].error === 'match' || valdata[p].error === false){
+
+                                    v = true;
+                                }
+                            }
+                        });
+
+                        v === true ? $('#signUpForm').submit() : null;
+                    }
+                }
             }
         }
     },
@@ -605,7 +615,7 @@ var helper = {
             async: true,
 
             success: function(data, status, xhr) {
-
+                
                 if (data.response === 'success') {
 
                     callback(true);
@@ -662,10 +672,12 @@ var helper = {
                     } else {
 
                         is_safari ? $('#'+thisField+'Registered').removeClass('show').addClass('hide') : null;
-                        helper.validateParams(thisField, comparedField);
+
+                        helper.validateParams(thisField, comparedField)
 
                         err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null;
                     }
+
                 });
 
             }else{
@@ -695,6 +707,7 @@ var helper = {
                 $('#'+thisField).get(0).setCustomValidity(helper.elementIDtoTitleCase(thisField) + ' is in improper format')
 
             }
+            $('#'+thisField).focus();
             err1 !== undefined ? helper.testUserInputEmail(thisField, err1) : null;
 
         }else if(err1 !== undefined && err1.error === 'empty'){
@@ -740,12 +753,10 @@ var helper = {
                     break;
 
                 case 'email':
-                    console.log('EMAILLLLLLLLLL 1: ', data[p])
                     helper.validateEmailField(null, 'email', 'confirmEmail', data[p]);
                     break;
 
                 case 'confirmEmail':
-                console.log('EMAILLLLLLLLLL 2: ', data[p])
                     helper.validateEmailField(null, 'confirmEmail', 'email', data[p]);
                     break;
    

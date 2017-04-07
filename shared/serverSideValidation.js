@@ -373,7 +373,7 @@ module.exports = function (req, res, validateTemplate, cb) {
     });
 
   }else{
-    console.log('####### > serverSideValidation > req.body > OUT 3: ');
+    console.log('####### > serverSideValidation > req.body > OUT 3: ', req.body);
     console.log('####### > serverSideValidation > callback3 > validatedUserInput: ', validatedUserInput);
     cb(validatedUserInput);
 

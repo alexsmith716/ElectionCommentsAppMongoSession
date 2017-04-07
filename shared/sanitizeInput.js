@@ -1,14 +1,21 @@
 
-// strip out keys starting with '$'
-// protect MongoDB from overwriting query selectors
+// identify keys starting with '$'
+// disallow overwriting of query selectors
 
-module.exports = function(m) {
-  	if (m instanceof Object) {
-    	for (var key in m) {
+module.exports = function(jOb) {
+
+	var a;
+	var b = {};
+
+  	if (jOb instanceof Object) {
+    	for (var key in jOb) {
       		if (/^\$/.test(key)) {
-        		delete m[key];
+      			a = true;
+        		delete jOb[key];
       		}
     	}
   	}
-  	return m;
+  	b['badInput'] = a;
+  	b['object'] = jOb;
+  	return b;
 };

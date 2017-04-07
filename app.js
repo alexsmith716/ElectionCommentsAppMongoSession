@@ -136,7 +136,6 @@ app.use(passport.session());
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-
 app.use(function(req, res, next){
 
   console.log('REQ.METHOD :: REQ.URL +++: ', req.method, " :: ", req.url)
@@ -144,8 +143,33 @@ app.use(function(req, res, next){
   console.log('REQ.SESSIONID +++: ', req.sessionID);
   console.log('REQ.USER +++: ', req.user);
 
+  var reqBody = sanitize(req.body);
+  var reqQuery = sanitize(req.query);
+  var reqParams = sanitize(req.params);
+
   app.locals.notifyMessage = null;
   app.locals.notifyMessageType = null;
+
+  if(reqBody['badInput'] || reqQuery['badInput'] || reqParams['badInput']){
+
+    var err = new Error('Bad Request');
+    err.status = 400;
+
+    // return next(createError(401, 'Please login to view this page.'));
+    return next(err);
+
+  }else{
+
+    next();
+  }
+
+});
+
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+app.use(function(req, res, next){
+
   res.locals.currentUser = req.user;
   res.locals.reqUrl = req.url;
   res.locals.currentURL = req.url;
@@ -154,10 +178,6 @@ app.use(function(req, res, next){
     req.session.paginateFrom = res.locals.sortDocsFrom;
     req.session.lastPageVisited = '/indexView';
   }
-
-  req.body = sanitize(req.body);
-  req.query = sanitize(req.query);
-  req.params = sanitize(req.params);
 
 
   // Version 10.1 (10603.1.30.0.34)
@@ -184,8 +204,6 @@ app.use(function(req, res, next){
     console.log('NOT SAFARI +++++++++++++++++++++++++++++++')
   	res.locals.isSafari = false;
   }
-
-  //return next(createError(401, 'Please login to view this page.'));
 
   next();
 });
@@ -237,8 +255,6 @@ if (app.get('env') === 'development') {
 
     //res.locals.notifyMessage = '';
     //res.locals.notifyMessageType = '';
-    app.locals.notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
-    app.locals.notifyMessageType = 'danger';
 
     console.log('DEVELOPMENT ERROR > code/status/name/xhr: ', err.code,  ' :: ', err.status, ' :: ', err.name, ' :: ', req.xhr);
     console.log('DEVELOPMENT ERROR: ', err);
