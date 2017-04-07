@@ -31,7 +31,7 @@ var helper = {
     },
 
 
-    testFormValidity: function (theForm, eventListener, setFocusOnly) {
+    testFormValidity: function (theForm, eventListener) {
 
         var boundEventTypes;
         var formElement;
@@ -50,20 +50,20 @@ var helper = {
                 resp.focusFirstElement = formElement;
             }
 
-            if(!setFocusOnly){
-                if(eventListener === 'change'){
-                    boundEventTypes = $._data( formElement[0], 'events' );
-                    for (var eType in boundEventTypes){
-                      helper.handleFormEvents(formElement.attr('id'), eType, formElement.val());
-                    }
-                }
-                if(eventListener === 'focusout'){
-                    formElement.on('focusout', function(e) {
-                        helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
-                    })
-                    formElement.trigger('focusout');
+            if(eventListener === 'change'){
+                boundEventTypes = $._data( formElement[0], 'events' );
+                for (var eType in boundEventTypes){
+                  helper.handleFormEvents(formElement.attr('id'), eType, formElement.val());
                 }
             }
+            
+            if(eventListener === 'focusout'){
+                formElement.on('focusout', function(e) {
+                    helper.handleFormEvents(formElement.attr('id'), 'focusout', formElement.val());
+                })
+                formElement.trigger('focusout');
+            }
+
         }
         return resp;
     },
