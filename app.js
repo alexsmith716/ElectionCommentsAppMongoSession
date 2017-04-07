@@ -255,6 +255,9 @@ if (app.get('env') === 'development') {
 
     //res.locals.notifyMessage = '';
     //res.locals.notifyMessageType = '';
+    app.locals.notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
+    app.locals.notifyMessageType = 'danger';
+    
 
     console.log('DEVELOPMENT ERROR > code/status/name/xhr: ', err.code,  ' :: ', err.status, ' :: ', err.name, ' :: ', req.xhr);
     console.log('DEVELOPMENT ERROR: ', err);
