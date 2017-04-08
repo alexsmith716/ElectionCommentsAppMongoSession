@@ -95,15 +95,8 @@ app.use(cookieParser());
 
 
 // var cookieExpireDate = new Date( Date.now() + 14 * 24 * 60 * 60 );
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// session will expire on sessionExpireDate
-// session will renew sessionExpireDate on each request
-// session will update itself on same-browser multiple logins
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 // var sessionExpireDate = 6 * 60 * 60 * 1000; // 6 hours
 // var sessionExpireDate = 1 * 60 * 1000; // 1 minute
-
 var sessionExpireDate = 10 * 60 * 1000; // 10 minutes
 
 
@@ -178,19 +171,6 @@ app.use(function(req, res, next){
     req.session.paginateFrom = res.locals.sortDocsFrom;
     req.session.lastPageVisited = '/indexView';
   }
-
-
-  // Version 10.1 (10603.1.30.0.34)
-  // https://webkit.org/blog/7099/html-interactive-form-validation/
-  // HTML interactive form validation is supported in WebKit
-  // HTML interactive form validation is enabled by default in Safari Technology Preview 19
-
-  // Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36
-  // Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.1 Safari/603.1.30
-
-  // Mozilla/5.0 (Linux; U; Android 4.0.3; de-ch; HTC Sensation Build/IML74K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30
-  // check string 'Mobi' anywhere in the User Agent to detect mobile device
-
 
   var s = /Safari/;
   var c = /Chrome/;
