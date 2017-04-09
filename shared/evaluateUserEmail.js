@@ -8,8 +8,6 @@ module.exports = function (email, expectingARegisteredEmail, callback) {
     
     if (err) {
 
-      console.log('###### > evaluateUserEmail.js > err: ', err)
-
       callback({status: 'err', response: 'error', message: err});
 
     }else {

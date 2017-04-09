@@ -219,121 +219,6 @@ module.exports.deleteOneComment = function(req, res) {
 };
 
 
-module.exports.getResetPasswordResponse = function(req, res) {
-  sendJSONresponse(res, 200), { "response": "getResetPasswordResponse Response!!!" };
-};
-
-module.exports.postValidateLogin = function(req, res, next) {
-  console.log('#### postValidateLogin');
-
-  if(!req.body.email || !req.body.password) {
-    console.log('#### postValidateLogin > error');
-    sendJSONresponse(res, 400, { 'response': 'All fields required' });
-
-  }else{
-
-    passport.authenticate('local', function(err, user, info){
-      if (err) {
-        console.log('#### postValidateLogin > error');
-        sendJSONresponse(res, 404, err);
-        return;
-      }
-      if (info) {
-        console.log('#### postValidateLogin > error');
-        sendJSONresponse(res, 401, info);
-        return;
-      }
-      if(user){
-        console.log('#### postValidateLogin > USER: ', user.id);
-        req.logIn(user, function(err) {
-          if (err) { 
-            console.log('#### postValidateLogin > error');
-            sendJSONresponse(res, 404, err);
-            return;
-          }
-          User.findById(user.id).exec(function(err, user) {
-            if (err) {
-              console.log('#### postValidateLogin > error');
-              sendJSONresponse(res, 404, err);
-              return;
-            }
-            if(user){
-              user.previouslogin = user.lastlogin;
-              user.lastlogin = new Date();
-              user.save(function(err, success) {
-                if (err) {
-                  console.log('#### postValidateLogin > error');
-                  sendJSONresponse(res, 404, err);
-                } else { 
-                  var htitle = 'Election App 2016!';
-                  var stitle = 'Log In or Sign Up to join the discussion';
-                  var data = {
-                    title: 'ThisGreatApp!',
-                    pageHeader: {
-                      title: htitle
-                    },
-                    subtitle: stitle,
-                    prevLogin: req.user.previouslogin
-                  };
-                  sendJSONresponse(res, 201, { 'response': 'success' });
-                }
-              });
-            }else{
-              sendJSONresponse(res, 404, { 'response': 'userid not found' });
-            }
-          });
-        });
-      } else {
-        sendJSONresponse(res, 401, { 'response': 'error' });
-      }
-    })(req, res, next);
-  }
-};
-
-module.exports.postLoginResponse = function(req, res, next) {
-  if(!req.body.email || !req.body.password) {
-    sendJSONresponse(res, 400, { "response": "All fields required" });
-  }else{
-
-    passport.authenticate('local', function(err, user, info){
-      if (err) {
-        console.log('#### apiMainCtrls > postLoginResponse > error');
-        sendJSONresponse(res, 404, err);
-        return;
-      }
-      if (info) {
-        console.log('#### apiMainCtrls > postLoginResponse > error');
-        sendJSONresponse(res, 401, info);
-        return;
-      }
-
-      if(user){
-        console.log('#### apiMainCtrls > postLoginResponse > passport.authenticate > req.user: : ', req.user);
-
-        req.logIn(user, function(err) {
-          console.log('#### apiMainCtrlsX > postLoginResponse > req.logIn');
-          if (err) { 
-            console.log('#### apiMainCtrls > postLoginResponse > req.logIn > error');
-            sendJSONresponse(res, 404, err);
-            return;
-          }
-          console.log('#### apiMainCtrls > postLoginResponse > req.logIn > req.user: : ', req.user);
-          user.previouslogin = user.lastlogin;
-          user.lastlogin = new Date();
-          user.save(function(err, success) {
-            if (err) {
-              console.log('#### apiMainCtrls > postLoginResponse > error');
-              sendJSONresponse(res, 404, err);
-            } else { 
-              console.log('#### apiMainCtrls > postLoginResponse > req.logIn');
-              sendJSONresponse(res, 201, { 'response': 'success' });
-            }
-          });
-        });
-      }
-    })(req, res, next);
-  }
-};
 
 module.exports.updateUserResponse = function(req, res) {
   if (!req.params.userid) {
@@ -361,15 +246,8 @@ module.exports.updateUserResponse = function(req, res) {
   });
 };
 
-var testValidatedUserInput = function (v) {
-  for (var key in v){
-    console.log('####### > testValidatedUserInput: ', key, ' : ', v[key]);
-    if(v[key].hasOwnProperty('error')){
-      console.log('####### > testValidatedUserInput > error: ', key, ' : ', v[key]);
-      return true;
-    }
-  }
-};
+
+
 
 module.exports.ajaxEvaluateUserProfile = function(req, res) {
 
@@ -439,13 +317,17 @@ module.exports.ajaxEvaluateRegisteredUser = function(req, res, next) {
 };
 
 
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+
 module.exports.ajaxEvaluateUserEmail = function(req, res) {
 
   evaluateUserEmail(req.body.email, req.body.expectedResponse, function(response) {
 
     if(response.status === 'err'){
-
-      console.log('###### > ajaxEvaluateUserEmail > err: ', response.message)
 
       return next(response.message);
 
@@ -467,8 +349,6 @@ module.exports.ajaxEvaluateUserEmail = function(req, res) {
 
 module.exports.ajaxForgotPassword = function(req, res) {
 
-  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
-
   var template = {email: 'required',
                   expectedResponse: 'false'};
 
@@ -480,13 +360,20 @@ module.exports.ajaxForgotPassword = function(req, res) {
 
     var validationErrors = false;
 
-    for(var prop in validatedResponse) {
+    if(validatedResponse === 'err') {
 
-      if(validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid'){
+      return next(validatedResponse.message);
 
-        validationErrors = true;
-        break;
+    }else{
 
+      for(var prop in validatedResponse) {
+
+        if(validatedResponse[prop].error === 'empty' || validatedResponse[prop].error === 'invalid'){
+
+          validationErrors = true;
+          break;
+
+        }
       }
     }
 
@@ -540,7 +427,6 @@ module.exports.ajaxLoginUser = function(req, res){
 
     if(validatedResponse === 'err') {
 
-      console.log('###### > ajaxLoginUser > err: ', validatedResponse.message)
       return next(validatedResponse.message);
 
     }else{
@@ -646,7 +532,6 @@ module.exports.ajaxSignUpUser = function(req, res, next){
 
     if(validatedResponse === 'err') {
 
-      console.log('###### > ajaxSignUpUser > err: ', validatedResponse.message)
       return next(validatedResponse.message);
 
     }else{

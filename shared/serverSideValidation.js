@@ -316,7 +316,6 @@ module.exports = function (req, res, validateTemplate, cb) {
 
       if(response.status === 'err'){
 
-        console.log('####### > serverSideValidation > evaluateUserEmail > err: ', response.status);
         cb(response);
 
       }else{

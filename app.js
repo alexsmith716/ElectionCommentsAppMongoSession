@@ -164,13 +164,14 @@ app.use(function(req, res, next){
 app.use(function(req, res, next){
 
   res.locals.currentUser = req.user;
-  res.locals.reqUrl = req.url;
   res.locals.currentURL = req.url;
 
-  if(res.locals.currentUser){
-    req.session.paginateFrom = res.locals.sortDocsFrom;
-    req.session.lastPageVisited = '/indexView';
-  }
+  console.log('########## app.js > req.user: ', req.user)
+
+  //if(res.locals.currentUser){
+    //req.session.paginateFrom = res.locals.sortDocsFrom;
+    //req.session.lastPageVisited = '/indexView';
+ //}
 
   var s = /Safari/;
   var c = /Chrome/;
