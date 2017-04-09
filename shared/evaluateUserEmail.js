@@ -8,7 +8,9 @@ module.exports = function (email, expectingARegisteredEmail, callback) {
     
     if (err) {
 
-      callback({status: 404, message: 'error'});
+      console.log('###### > evaluateUserEmail.js > err: ', err)
+
+      callback({status: 'err', response: 'error', message: err});
 
     }else {
 

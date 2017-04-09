@@ -70,10 +70,6 @@ var helper = {
 
     initializeJqueryEvents:  function(){
 
-        $('#signUpSubmitBtn').on('click', function(e) {
-            //console.log('#signUpSubmitBtn > click +++');
-        });
-
         $('#signUpForm').on('submit', function(e) {
 
             e.preventDefault();

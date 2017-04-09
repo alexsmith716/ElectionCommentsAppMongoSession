@@ -131,7 +131,7 @@ app.use(passport.session());
 
 app.use(function(req, res, next){
 
-  console.log('REQ.METHOD :: REQ.URL +++: ', req.method, " :: ", req.url)
+  console.log('REQ.METHOD :: REQ.URL: ', req.method, " :: ", req.url)
   console.log('REQ.HEADERS +++: ', req.headers['user-agent']);
   console.log('REQ.SESSIONID +++: ', req.sessionID);
   console.log('REQ.USER +++: ', req.user);
@@ -209,27 +209,14 @@ app.use(function(req, res, next) {
 });
 
 
-
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-/*
-app.use(function (err, req, res, next) {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401);
-    res.json({});
-  }
-});
-*/
-
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-/* +++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-
 
 if (app.get('env') === 'development') {
 
  	app.use(function (err, req, res, next) {
+
+ 	console.log('################################ DEVELOPMENT ############################');
 
     res.status(err.status || 500);
 
@@ -237,10 +224,12 @@ if (app.get('env') === 'development') {
     //res.locals.notifyMessageType = '';
     app.locals.notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
     app.locals.notifyMessageType = 'danger';
+    app.locals.notifyMessageErr = err;
+    app.locals.notifyMessageReqXhr = req.xhr;
+    app.locals.notifyMessageReferer = req.headers['referer'];
     
-
-    console.log('DEVELOPMENT ERROR > code/status/name/xhr: ', err.code,  ' :: ', err.status, ' :: ', err.name, ' :: ', req.xhr);
-    console.log('DEVELOPMENT ERROR: ', err);
+    console.log('DEV ERROR (code|status|name|message|xhr): ', err.code,  ' :: ', err.status, ' :: ', err.name, ' :: ', req.xhr);
+    console.log('DEV ERR: ', err);
 
     req.session.destroy(function(err) {
 
@@ -261,14 +250,17 @@ if (app.get('env') === 'development') {
       }
 
     });
-		/*
-		res.render('error', {
-		  message: err.message,
-		  error: err,
-		  errHeaders: req.headers['referer'],
-		  reqXhr: req.xhr
-		});
-		*/
+
+    /*
+	res.render('error', {
+	  message: 'Foooo',
+	  error: err,
+	  errHeaders: req.headers['referer'],
+	  reqXhr: req.xhr,
+	  type: 'danger'
+	});
+	*/
+
  	});
 };
 
@@ -284,7 +276,7 @@ app.use(function(err, req, res, next) {
 
     app.locals.notifyMessage = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
     app.locals.notifyMessageType = 'danger';
-
+   
     req.session.destroy(function(err) {
 
       req.logout();
@@ -296,9 +288,13 @@ app.use(function(err, req, res, next) {
 
       }else{
 
-        res.redirect('/notifyError');
+        res.render('notifyError', {
+          message: app.locals.notifyMessage,
+          type: app.locals.notifyMessageType
+        });
 
       }
+
     });
 });
 

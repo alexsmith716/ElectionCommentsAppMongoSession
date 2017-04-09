@@ -36,8 +36,20 @@ block content
                 .alert.alert-danger(role="alert") #{message}
 
 
-            h1= message
+            - var appErrorName = `${notifyMessageErr.name}`
+            - var appErrorMessage = `${notifyMessageErr.message}`
+            - var appErrorStatus = `${notifyMessageErr.status}`
+            - var appErrorCode = `${notifyMessageErr.code}`
+            - var appErrorStack = `${notifyMessageErr.stack}`
+            
 
-            h2= error.status
-
-            pre #{error.stack}
+            pre
+              p Name: #{appErrorName}
+              p Message: #{appErrorMessage}
+              p Status: #{appErrorStatus}
+              p Code: #{appErrorCode}
+              p Xhr: #{notifyMessageReqXhr}
+              p Referer: #{notifyMessageReferer}
+              hr
+              br
+              p Stack: #{appErrorStack}
