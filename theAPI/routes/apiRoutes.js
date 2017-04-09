@@ -15,18 +15,11 @@ router.post('/comments/maincomment', auth.ensureAuthenticated, apiControllers.po
 
 router.post('/comments/subcomment/:subcommentid', auth.ensureAuthenticated, apiControllers.postSubCommentResponse);
 
-router.post('/login', apiControllers.postLoginResponse);
-
 router.get('/userprofile/:userid', auth.ensureAuthenticated, apiControllers.getUserProfileResponse);
-
-router.get('/resetpassword', auth.ensureNotAuthenticated, apiControllers.getResetPasswordResponse);
 
 router.put('/login/:userid', apiControllers.updateUserResponse);
 
 router.get('/:commentid', auth.ensureAuthenticated, apiControllers.getOneCommentResponse);
-
-router.post('/validatelogin', apiControllers.postValidateLogin);
-
 
 router.post('/loginuser', csrfProtection, apiControllers.ajaxLoginUser);
 router.post('/forgotpassword', csrfProtection, apiControllers.ajaxForgotPassword);

@@ -9,17 +9,6 @@ var auth              = require('../../shared/auth');
 var csrfProtection 		= csrf({ cookie: true });
 
 
-router.use(function(req, res, next) {
-  res.locals.currentUser = req.user;
-  //res.locals.currentURL = req.url;
-  if(res.locals.currentUser){
-    //.session.paginateFrom = res.locals.sortDocsFrom;
-    //req.session.lastPageVisited = '/indexView';
-  }
-  next();
-});
-
-
 router.get('/', serverControllers.getIndex);
 
 router.get('/resetpassword', csrfProtection, serverControllers.getResetPassword);
