@@ -1,5 +1,4 @@
 
-var appX = require('../../app');
 var fs  = require('fs');
 var https   = require('https');
 var request = require('request');
@@ -32,30 +31,36 @@ if (process.env.NODE_ENV === 'production') {
 /* +++++++++++++++++++++++++++++++++++++++++++++++++ */
 
 
-
 var _handleError = function (req, res, statusCode) {
+
+  console.log('################################ _handleError ############################');
 
   var title;
   var content;
+  var addInfo = 'A website error recently occurred, please try to Log In or Sign Up again. If this problem continues, please contact customer service.';
 
   if (statusCode === 404) {
+
     title = '404, Page not found:';
-    content = 'The page you requested cannot be found. Please try again. \n\n If this problem continues, please contact our Help Desk at 555-555-1234 or email customer.care@ThisGreatApp.com.';
+    content = addInfo + '\n\nThe page you requested cannot be found. Please try again.';
 
   } else if (statusCode === 500) {
+
     title = '500, Internal server error:';
-    content = 'There is a problem with our server. Please try again. \n\n If this problem continues, please contact our Help Desk at 555-555-1234 or email customer.care@ThisGreatApp.com.';
+    content = addInfo + '\n\nThere is a problem with our server. Please try again.';
 
   } else {
+
     title = statusCode + ', Error processing request:';
-    content = 'An Error has occurred processing your request. Please try again. \n\n If this problem continues, please contact our Help Desk at 555-555-1234 or email customer.care@ThisGreatApp.com.';
+    content = addInfo + '\n\nAn Error has occurred processing your request. Please try again.';
+
   }
 
   res.status(statusCode);
 
-  res.render('basicView', {
-    title : title,
-    content : content
+  res.render('notifyError', {
+    message : title + '\n\n' + content,
+    type : 'danger'
   });
 
 };
@@ -85,7 +90,7 @@ module.exports.getLogout = function(req, res){
 
     if(err){
 
-      _handleError(req, res, 400);
+      handleError(req, res, 400);
 
     }else{
 
@@ -112,7 +117,7 @@ module.exports.getIndex = function(req, res){
   };
   request(requestOptions, function(err, response) {
     if(err){
-      _handleError(req, res, err);
+      handleError(req, res, err);
     }else if (response.statusCode === 200) {
       var htitle = 'Election App 2016!';
       var stitle = 'Log In or Sign Up to join the discussion';
@@ -123,7 +128,7 @@ module.exports.getIndex = function(req, res){
         subtitle: stitle
       })
     }else{
-      _handleError(req, res, response.statusCode);
+      handleError(req, res, response.statusCode);
     }
   });
 };
@@ -156,7 +161,7 @@ module.exports.getComments = function(req, res){
   };
   request(requestOptions, function(err, response, body) {
     if(err){
-      _handleError(req, res, err);
+      handleError(req, res, err);
     }else if (response.statusCode === 200) {
       var htitle = 'Election App 2016!';
       var stitle = 'Log In or Sign Up to join the discussion';
@@ -176,7 +181,7 @@ module.exports.getComments = function(req, res){
         message: message
       })
     }else{
-      _handleError(req, res, response.statusCode);
+      handleError(req, res, response.statusCode);
     }
   });
 };
@@ -232,7 +237,7 @@ module.exports.putUserProfile = function(req, res){
         res.redirect('/userprofile');
 
       } else if (response.statusCode === 400 && body.name && body.name === 'ValidationError' ) {
-        _handleError(req, res, response.statusCode);
+        handleError(req, res, response.statusCode);
 
       } else if (response.statusCode === 404) {
 
@@ -241,7 +246,7 @@ module.exports.putUserProfile = function(req, res){
           m = body.message
           res.redirect('/signup/?err='+m);
         }
-        _handleError(req, res, response.statusCode);
+        handleError(req, res, response.statusCode);
       }
     });
   }
@@ -283,7 +288,7 @@ module.exports.postMainComment = function(req, res){
           m = 'Error has ocurred (serverMainCtrls.js > requestAddNewComment)';
           res.redirect('/comments/?err='+m);
       } else {
-          _handleError(req, res, httpResponse.statusCode);
+          handleError(req, res, httpResponse.statusCode);
       }
     });
   }
@@ -326,7 +331,7 @@ module.exports.postSubComment = function(req, res){
           m = 'Error has ocurred > serverMainCtrls.js > postSubComment)';
           res.redirect('/comments/subcomment/' + sanitizeInput1 + '/?err='+m);
       } else {
-          _handleError(req, res, response.statusCode);
+          handleError(req, res, response.statusCode);
       }
     });
   }
@@ -370,7 +375,7 @@ module.exports.getResetPassword = function(req, res){
   request(requestOptions, function(err, response) {
     if(err){
       console.log('getResetPassword +++')
-      _handleError(req, res, err);
+      handleError(req, res, err);
     }else if (response.statusCode === 200) {
 
       m = 'Please check your email. Instructions have been sent to your email address on how to reset your password.';
@@ -385,7 +390,7 @@ module.exports.getResetPassword = function(req, res){
       });
 
     }else{
-      _handleError(req, res, response.statusCode);
+      handleError(req, res, response.statusCode);
     }
   });
 };
@@ -442,7 +447,7 @@ module.exports.postLogin = function(req, res, next){
           if (response.statusCode === 200) {
             res.redirect('/userhome');
           }else{
-            _handleError(req, res, response.statusCode);
+            handleError(req, res, response.statusCode);
           }
         });
       });
@@ -477,7 +482,7 @@ module.exports.getLogin = function(req, res) {
 
     if(err){
 
-      _handleError(req, res, 400);
+      handleError(req, res, 400);
 
     }else{
 
@@ -500,7 +505,7 @@ module.exports.getSignup = function(req, res) {
 
     if(err){
 
-      _handleError(req, res, 400);
+      handleError(req, res, 400);
 
     }else{
 
@@ -531,7 +536,7 @@ module.exports.getUserProfile = function(req, res) {
   };
   request(requestOptions, function(err, response, body) {
     if(err){
-      _handleError(req, res, err);
+      handleError(req, res, err);
     }else if (response.statusCode === 200) {
       res.render('userProfile', {
         csrfToken: req.csrfToken(),
@@ -539,7 +544,7 @@ module.exports.getUserProfile = function(req, res) {
         error: error
       });
     }else{
-      _handleError(req, res, response.statusCode);
+      handleError(req, res, response.statusCode);
     }
   });
 };
@@ -577,7 +582,7 @@ module.exports.getNotifyError = function(req, res) {
 
     if(err){
 
-      _handleError(req, res, 400);
+      handleError(req, res, 400);
 
     }else{
 
@@ -653,6 +658,16 @@ module.exports.getTeam = function(req, res) {
       header: 'Meet the Team'
     },
     content: 'The team behind ThisGreatApp! are a dedicated bunch who enjoy sharing favorite places and experiences.\n\nAt vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.'
+  });
+};
+
+module.exports.getCustomerService = function(req, res) {
+  res.render('basicView', {
+    title: 'Customer Service',
+    pageHeader: {
+      header: 'ThisGreatApp\'s Customer Service'
+    },
+    content: 'We at ThisGreatApp are dedicated to providing the highest level of customer service.\n\nAt vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.'
   });
 };
 

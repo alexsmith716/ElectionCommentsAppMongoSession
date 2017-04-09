@@ -19,9 +19,12 @@ block content
 
       .row
       
-        .col-lg-9.col-md-10.col-sm-11.col-xs-12.col-centered
+        .col-lg-10.col-centered
 
           .panel-body
+
+            if(title != undefined)
+              h3= title
 
             if (message != undefined)
 
@@ -34,11 +37,12 @@ block content
               if(type === 'danger')
                 .alert.alert-danger(role="alert") #{message}
 
-            h2
-              | This is Election App 2016! 
-              br
-              h3 Start now to participate in the discussion!
-            
+
+            p If this problem continues, please contact our Help Desk at 555-555-1234 or email customer.care@ThisGreatApp.com. Visit our
+              |&nbsp;
+              a.highlight(href='/customerservice') Customer Service
+              |&nbsp;webpage for a full listing of helpful information.
+
             br
 
             p Please
@@ -48,13 +52,32 @@ block content
               a.highlight(href='/login') Log In
               |&nbsp;or&nbsp;
               a.highlight(href='/signup') Sign Up
-              |&nbsp;to use Election App 2016.
+              |&nbsp;to start using Election App 2016.
+
 
             br
+            hr
+            br
 
-            p Contact
-              |&nbsp;
-              a.highlight(href='/customerservice') Customer Service
-              |&nbsp;for questions and comments.
+            - var appError = `${notifyMessageErr}`
+            - var appErrorName = `${notifyMessageErr.name}`
+            - var appErrorMessage = `${notifyMessageErr.message}`
+            - var appErrorStatus = `${notifyMessageErr.status}`
+            - var appErrorCode = `${notifyMessageErr.code}`
+            - var appErrorStack = `${notifyMessageErr.stack}`
+            
+
+            pre
+              p Error: #{appError}
+              p Name: #{appErrorName}
+              p Message: #{appErrorMessage}
+              p Status: #{appErrorStatus}
+              p Code: #{appErrorCode}
+              p Xhr: #{notifyMessageReqXhr}
+              p Referer: #{notifyMessageReferer}
+              hr
+              br
+              p Stack: #{appErrorStack}
+
 
 

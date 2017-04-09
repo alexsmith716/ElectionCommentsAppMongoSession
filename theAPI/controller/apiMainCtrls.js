@@ -442,7 +442,19 @@ module.exports.ajaxEvaluateRegisteredUser = function(req, res, next) {
 module.exports.ajaxEvaluateUserEmail = function(req, res) {
 
   evaluateUserEmail(req.body.email, req.body.expectedResponse, function(response) {
-    sendJSONresponse(res, response.status, { 'response': response.response });
+
+    if(response.status === 'err'){
+
+      console.log('###### > ajaxEvaluateUserEmail > err: ', response.message)
+
+      return next(response.message);
+
+    }else{
+
+      sendJSONresponse(res, response.status, { 'response': response.response });
+
+    }
+
   });
   
 };
@@ -454,6 +466,8 @@ module.exports.ajaxEvaluateUserEmail = function(req, res) {
 // but instructions only really sent if email is a registered email
 
 module.exports.ajaxForgotPassword = function(req, res) {
+
+  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
 
   var template = {email: 'required',
                   expectedResponse: 'false'};
@@ -509,6 +523,8 @@ var validateMaxLengthUserInput = function (val,maxlen) {
 
 module.exports.ajaxLoginUser = function(req, res){
 
+  var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
+
   var template = {email: 'required',
                   password: 'required', 
                   expectedResponse: 'true'};
@@ -522,13 +538,21 @@ module.exports.ajaxLoginUser = function(req, res){
 
     var validationErrors = false;
 
-    for(var prop in validatedResponse) {
+    if(validatedResponse === 'err') {
 
-      if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+      console.log('###### > ajaxLoginUser > err: ', validatedResponse.message)
+      return next(validatedResponse.message);
 
-        validationErrors = true;
-        break;
+    }else{
 
+      for(var prop in validatedResponse) {
+
+        if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+
+          validationErrors = true;
+          break;
+
+        }
       }
     }
 
@@ -537,19 +561,21 @@ module.exports.ajaxLoginUser = function(req, res){
       passport.authenticate('local', function(err, user, info){
 
         if (err) {
-          sendJSONresponse(res, 404, { 'response': 'error' });
-          return;
+
+          return next(err);
+
         }
         if (info) {
-          sendJSONresponse(res, 401, { 'response': 'error' });
+
+          sendJSONresponse(res, 400, errResponse);
           return;
         }
 
         req.logIn(user, function(err) {
           
           if (err) { 
-            sendJSONresponse(res, 404, { 'response': 'error' });
-            return;
+
+            return next(err);
 
           }else{
 
@@ -557,12 +583,19 @@ module.exports.ajaxLoginUser = function(req, res){
             user.lastlogin = new Date();
 
             user.save(function(err, success) {
+
               if (err) {
-                sendJSONresponse(res, 404, { 'response': 'error' });
+
+                return next(err);
+
               } else {
+
                 sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' });
+
               }
+
             });
+
           }
         });
       })(req, res);
@@ -575,21 +608,8 @@ module.exports.ajaxLoginUser = function(req, res){
   });
 };
 
-/*
-{ displayname: 'cdscscd',
-email: 'cdscsdcds@csccsdcd.com',
-confirmEmail: 'cdscsdcds@csccsdcd.com',
-password: 'qqqq',
-confirmPassword: 'qqqq',
-firstname: '          vvdfvdfvdfvfddfvdf     ',
-lastname: 'fv   gbbbfgbgbfg     ',
-city: '              nbnnhgngngnhnhgnghnh   bgbfgbfgbgfb',
-state: '{"initials":"AL","full":"Alabama"}',
-_csrf: 'yiafwn0A-MylfKIb_HlcPA3ZCnBeQYYFAvvY' }
-*/
 
-// AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz
-module.exports.ajaxSignUpUser = function(req, res){
+module.exports.ajaxSignUpUser = function(req, res, next){
 
   var template = {displayname: 'required', 
                         email: 'required',
@@ -622,29 +642,32 @@ module.exports.ajaxSignUpUser = function(req, res){
 
   serverSideValidation(req, res, template, function(validatedResponse) {
 
-    Object.keys(validatedResponse).forEach(function(prop) {
-      //console.log('Object.keys(validatedResponse): ', prop, ' || ', validatedResponse[prop]);
-      //console.log('Object.keys(validatedResponse) error: ', prop, ' || ', validatedResponse[prop].error);
-    });
-    
     var validationErrors = false;
 
-    for(var prop in validatedResponse) {
+    if(validatedResponse === 'err') {
 
-      if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+      console.log('###### > ajaxSignUpUser > err: ', validatedResponse.message)
+      return next(validatedResponse.message);
 
-        validationErrors = true;
-        break;
+    }else{
 
+      for(var prop in validatedResponse) {
+
+        if(validatedResponse[prop].error !== false && validatedResponse[prop].error !== 'match'){
+
+          validationErrors = true;
+          break;
+
+        }
       }
+
     }
 
     if(!validationErrors){
 
-      // creation of new user here +++++
-
-      /*
+      var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
       var newUser = new User();
+
       newUser.displayname = req.body.displayname;
       newUser.email = req.body.email;
       newUser.firstname = req.body.firstname;
@@ -653,29 +676,80 @@ module.exports.ajaxSignUpUser = function(req, res){
       newUser.state = req.body.state;
 
       newUser.setPassword(req.body.password, function(err, result){
-        if (err) {
-          sendJSONresponse(res, 400, err);
-        }
-        newUser.save(function(err) {
-          if (err) {
-            sendJSONresponse(res, 400, err);
-          } else {
-            sendJSONresponse(res, 201, result);
-          }
-        });
-      });
-      */
 
-      console.log('############ ajaxSignUpUser > NO validationErrors (going to database) ##############');
-      sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/loginorsignup' });
+        if (err) {
+
+          return next(err);
+
+        }else{
+
+          newUser.save(function(err) {
+
+            if (err) {
+
+              return next(err);
+
+            } else {
+
+              passport.authenticate('local', function(err, user, info){
+
+                if (err) {
+
+                  return next(err);
+
+                }
+
+                if (info) {
+
+                  sendJSONresponse(res, 400, errResponse);
+                  return;
+
+                }
+
+                if(user){
+
+                  req.logIn(user, function(err) {
+
+                    if (err) { 
+
+                      return next(err);
+
+                    }
+
+                    req.session.save(function (err) {
+
+                      if (err) {
+
+                        return next(err);
+
+                      }
+
+                      sendJSONresponse(res, 201, { 'response': 'success', 'redirect': 'https://localhost:3000/userhome' });
+
+                    });
+
+                  });
+
+                } else {
+
+                  sendJSONresponse(res, 400, errResponse);
+                  return;
+
+                }
+              })(req, res, next);
+
+            }
+
+          });
+
+        }
+      });
 
     }else{
 
-      console.log('############ ajaxSignUpUser > YES validationErrors (going to client) ##############');
       sendJSONresponse(res, 201, { 'response': 'error', 'validatedData': validatedResponse });
 
     }
   });
 };
-
 

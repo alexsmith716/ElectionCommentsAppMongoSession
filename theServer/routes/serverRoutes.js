@@ -45,6 +45,7 @@ router.get('/resources', serverControllers.getResouces);
 router.get('/about', serverControllers.getAbout);
 router.get('/contact', serverControllers.getContact);
 router.get('/team', serverControllers.getTeam);
+router.get('/customerservice', serverControllers.getCustomerService);
 
 module.exports = router;
 
