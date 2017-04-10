@@ -8,6 +8,7 @@ var passport = require('passport');
 var mongoose    = require('mongoose');
 var serverSideValidation = require('../../shared/serverSideValidation.js');
 var evaluateUserEmail = require('../../shared/evaluateUserEmail.js');
+var stateNamer = require('../../shared/stateNamer.js');
 
 var sortKey = 'time'
 var sort = '-' + sortKey
@@ -516,7 +517,7 @@ module.exports.ajaxSignUpUser = function(req, res, next){
                     firstname: '          Abcdefghijklmnopqrst             ',
                     lastname: '   Ccccc Cityyyyyyyy     ',
                     city: '               AbcdefghijklmnopqrstUvwxyzabcdefghIjklmnopqrstuvwxyz          ',
-                    state: { initials: 'NY', full: 'New York' }};
+                    state: 'New York'};
 
   var testerJOB2 = {displayname: ' displaynameABC123',
                     email: 'aaa1@aaa.com',
@@ -552,6 +553,13 @@ module.exports.ajaxSignUpUser = function(req, res, next){
 
       var errResponse = {'response': 'error', 'type': 'error', 'redirect': 'https://localhost:3000/notifyError'};
       var newUser = new User();
+
+      var stateFull = stateNamer(req, res, req.body.state, 'full');
+
+      req.body.state = {
+        full: stateFull,
+        initials: req.body.state
+      };
 
       newUser.displayname = req.body.displayname;
       newUser.email = req.body.email;

@@ -239,7 +239,6 @@ module.exports = function (req, res, validateTemplate, cb) {
 
       }else if(objName === 'state'){
 
-        // { initials: 'MT', full: 'Montana' }
         elementObject = {};
 
         if(reqBody[objName] === ''){
@@ -250,7 +249,7 @@ module.exports = function (req, res, validateTemplate, cb) {
 
           elementObject.error = false;
         }
-
+        
         validatedUserInput[objName] = elementObject;
       }
     }

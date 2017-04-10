@@ -523,30 +523,41 @@ module.exports.getSignup = function(req, res) {
 
 
 module.exports.getUserProfile = function(req, res) {
+
   var error;
   req.session.csrfError ? error = req.session.csrfError : null;
-
   var requestOptions, path;
   path = '/api/userprofile/' + res.locals.currentUser.id;
+
   requestOptions = {
     rejectUnauthorized: false,
     url : apiOptions.server + path,
     method : 'GET',
     json : {}
   };
+
   request(requestOptions, function(err, response, body) {
+
     if(err){
+
       handleError(req, res, err);
+
     }else if (response.statusCode === 200) {
+
       res.render('userProfile', {
         csrfToken: req.csrfToken(),
         responseBody: body,
         error: error
       });
+
     }else{
+
       handleError(req, res, response.statusCode);
+
     }
+
   });
+
 };
 
 

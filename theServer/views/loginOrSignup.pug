@@ -34,20 +34,21 @@ block content
               if(type === 'danger')
                 .alert.alert-danger(role="alert") #{message}
 
-            div
-              h2
-                | Only Registered Users can access this page.
-                br
-                h3 Start now to participate in the discussion!
-            
+            h2 Only Registered Users can access this page!
+
             br
 
-            div
-              p Please
-                |&nbsp;
-                a.highlight(href='/login') Log In
-                |&nbsp;or&nbsp;
-                a.highlight(href='/signup') Sign Up
-                |&nbsp;to use Election App 2016.
+            p (or maybe your session has expired)
+
+            h3 Start now to participate in the discussion!
+
+            br
+            
+            p Please
+              |&nbsp;
+              a.highlight(href='/login') Log In
+              |&nbsp;or&nbsp;
+              a.highlight(href='/signup') Sign Up
+              |&nbsp;to use Election App 2016.
 
 

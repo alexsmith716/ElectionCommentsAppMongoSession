@@ -30,13 +30,15 @@ block content
 
             h2.form-title Sign up GOOD
 
-            p csrf token: #{csrfToken}
 
+
+            p.small CSRF token: <br> #{csrfToken}
             if isSafari
-              p user-agent: safari
-
+              p.small user-agent: safari
             if !isSafari
-              p user-agent: chrome
+              p.small user-agent: chrome
+
+
 
             if (message != undefined)
 
